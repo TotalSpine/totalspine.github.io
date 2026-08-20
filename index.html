@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="format-detection" content="telephone=yes" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Total Spine" />
+  <title>Total Spine & Orthopedics | Workers' Compensation Experience</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="assets/total-spine-green-blue-logo.png" />
+  <link rel="apple-touch-icon" href="assets/total-spine-green-blue-logo.png" />
+  <link rel="stylesheet" href="styles.css" />
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script nomodule defer src="https://unpkg.com/@google/model-viewer/dist/model-viewer-legacy.js"></script>
+</head>
+<body>
+  <div class="noise"></div>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <div class="spark-field" aria-hidden="true"></div>
+
+  <main class="experience-shell">
+    <header class="top-nav reveal">
+      <a class="brand official-brand" href="#home" data-nav="home" aria-label="Total Spine & Orthopedics Home">
+        <img class="brand-logo-img" src="assets/total-spine-green-blue-logo.png" alt="Total Spine logo" />
+        <span class="logo-text"><b>TOTAL SPINE</b><small>& ORTHOPEDICS</small></span>
+      </a>
+      <nav class="nav-links" aria-label="Experience navigation">
+        <button data-nav="home" class="active">⌂<span>Home</span></button>
+        <button data-nav="journey">◌<span>Journey</span></button>
+        <button data-nav="providers">♙<span>Providers</span></button>
+        <button data-nav="why">✦<span>Why Us</span></button>
+        <button data-nav="resources">▣<span>Resources</span></button>
+        <button data-nav="contact">☎<span>Refer</span></button>
+      </nav>
+      <button class="nav-cta" data-nav="contact">Start Referral <span>→</span></button>
+    </header>
+
+    <section class="screen hero active" id="home" data-screen>
+      <div class="hero-copy reveal delay-1">
+        <p class="eyebrow">Workers' Compensation Spine & Orthopedic Care</p>
+        <h1>Total Spine,<br>Total Joint,<br><em>Total You.</em></h1>
+        <p class="lede">When a work injury involves neck, back, arm, leg, knee, hip, or joint pain, case managers need a clear path forward. Total Spine & Orthopedics provides personalized care, minimally invasive treatment options, and support from referral through recovery.</p>
+        <div class="hero-buttons">
+          <button class="pill-button play" id="openVideo"><span>▶</span> Watch Overview</button>
+          <button class="pill-button ghost" data-nav="journey">Explore Case Pathway</button>
+        </div>
+        <div class="partner-card float-card">
+          <span class="icon">☷</span>
+          <b>For Case Managers & Referral Partners</b>
+          <p>Use this experience to understand what happens after a referral, which conditions we treat, and how our team supports injured workers.</p>
+        </div>
+      </div>
+
+      <div class="spine-stage skeleton-stage reveal delay-2" aria-label="Interactive 3D orthopedic skeleton explorer">
+        <div class="halo"></div>
+        <model-viewer
+          id="skeletonViewer"
+          src="assets/orthopedic-skeleton.glb"
+          alt="Interactive 3D skeleton model"
+          camera-controls
+          auto-rotate
+          auto-rotate-delay="1800"
+          rotation-per-second="18deg"
+          interaction-prompt="auto"
+          shadow-intensity="0.65"
+          exposure="1.15"
+          camera-orbit="0deg 78deg 8m"
+          field-of-view="26deg"
+          min-camera-orbit="auto auto 1.1m"
+          max-camera-orbit="auto auto 12m"
+          touch-action="none"
+          disable-tap
+          class="skeleton-viewer">
+          <div class="model-fallback" slot="poster">Loading interactive 3D skeleton...</div>
+          <button class="region-marker" slot="hotspot-cervical" data-region="cervical" data-position="0 0.70 0.04" data-normal="0 0 1" aria-label="Focus cervical spine"><span></span></button>
+          <button class="region-marker" slot="hotspot-thoracic" data-region="thoracic" data-position="0 0.42 0.06" data-normal="0 0 1" aria-label="Focus thoracic spine"><span></span></button>
+          <button class="region-marker" slot="hotspot-lumbar" data-region="lumbar" data-position="0 0.19 0.06" data-normal="0 0 1" aria-label="Focus lumbar spine"><span></span></button>
+          <button class="region-marker" slot="hotspot-sacrum" data-region="sacrum" data-position="0 0.06 0.06" data-normal="0 0 1" aria-label="Focus SI joint"><span></span></button>
+          <button class="region-marker" slot="hotspot-shoulder" data-region="shoulder" data-position="0.18 0.61 0.02" data-normal="0 0 1" aria-label="Focus shoulder"><span></span></button>
+          <button class="region-marker" slot="hotspot-hip" data-region="hip" data-position="0.10 0.02 0.02" data-normal="0 0 1" aria-label="Focus hip"><span></span></button>
+          <button class="region-marker" slot="hotspot-knee" data-region="knee" data-position="0.10 -0.42 0.04" data-normal="0 0 1" aria-label="Focus knee"><span></span></button>
+          <button class="region-marker" slot="hotspot-foot" data-region="foot" data-position="0.10 -0.86 0.06" data-normal="0 0 1" aria-label="Focus ankle and foot"><span></span></button>
+        </model-viewer>
+        <button class="hotspot cervical active" data-region="cervical"><span></span>Cervical</button>
+        <button class="hotspot thoracic" data-region="thoracic"><span></span>Thoracic</button>
+        <button class="hotspot lumbar" data-region="lumbar"><span></span>Lumbar</button>
+        <button class="hotspot sacrum" data-region="sacrum"><span></span>SI Joint</button>
+        <div class="drag-hint"><span>↔</span> Touch and drag the skeleton<br>or tap a region to focus the explorer</div>
+      </div>
+
+      <aside class="region-explorer reveal delay-3">
+        <p class="panel-title">Interactive Spine Explorer</p>
+        <button class="region-card active" data-region="cervical"><i></i><b>Cervical Spine</b><small>Neck pain, whiplash, pinched nerves, arm pain, numbness, headaches, and cervical disc conditions.</small><span>→</span></button>
+        <button class="region-card" data-region="thoracic"><i></i><b>Thoracic Spine</b><small>Mid-back pain, postural pain, rib referral patterns, fractures, and traumatic back symptoms.</small><span>→</span></button>
+        <button class="region-card" data-region="lumbar"><i></i><b>Lumbar Spine</b><small>Low back pain, sciatica, herniated or bulging discs, stenosis, and leg symptoms.</small><span>→</span></button>
+        <button class="region-card" data-region="sacrum"><i></i><b>SI Joint</b><small>Sacroiliac joint pain, pelvic-related low back pain, tailbone pain, and lower spine dysfunction.</small><span>→</span></button>
+      </aside>
+
+      <section class="joint-explorer glass reveal delay-4" aria-label="Total joint explorer">
+        <div class="joint-intro">
+          <p class="panel-title">Total Joint Explorer</p>
+          <h2>We Treat Every Major Orthopedic Region</h2>
+          <p>For workers' compensation referrals, the four most important joint regions are shoulder, hip, knee, and ankle & foot. Click any card to focus the 3D skeleton and explain common work-injury pathways.</p>
+        </div>
+        <button class="joint-card" data-region="shoulder"><span class="joint-icon">◖</span><b>Shoulder</b><small>Rotator cuff tears, impingement, arthritis, instability, labral injuries, and traumatic shoulder pain.</small><em>Explore →</em></button>
+        <button class="joint-card" data-region="hip"><span class="joint-icon">◠</span><b>Hip</b><small>Hip arthritis, bursitis, labral tears, traumatic hip pain, and replacement evaluation when needed.</small><em>Explore →</em></button>
+        <button class="joint-card" data-region="knee"><span class="joint-icon">◉</span><b>Knee</b><small>Meniscus tears, arthritis, ACL or ligament injuries, patella injuries, and knee replacement evaluation.</small><em>Explore →</em></button>
+        <button class="joint-card" data-region="foot"><span class="joint-icon">⌞</span><b>Ankle & Foot</b><small>Sprains, fractures, tendon injuries, arthritis, deformities, and lower-extremity return-to-walking issues.</small><em>Explore →</em></button>
+      </section>
+
+      <section class="journey-strip glass reveal delay-4" aria-label="Patient journey summary">
+        <h2>Referral-to-Recovery Pathway</h2>
+        <div class="journey-icons compact-icons">
+          <button data-step="0" class="active"><span>⚡</span><b>Injury</b><small>Symptoms documented</small></button>
+          <button data-step="1"><span>▤</span><b>Referral</b><small>Claim details organized</small></button>
+          <button data-step="2"><span>♩</span><b>Evaluation</b><small>Specialist review</small></button>
+          <button data-step="3"><span>◉</span><b>Imaging</b><small>MRI / CT / X-ray review</small></button>
+          <button data-step="4"><span>◍</span><b>Treatment</b><small>Plan built around function</small></button>
+          <button data-step="5"><span>⇧</span><b>Recovery</b><small>Progress monitored</small></button>
+          <button data-step="6"><span>✓</span><b>Return</b><small>Daily activity & work goals</small></button>
+        </div>
+      </section>
+    </section>
+
+    <section class="screen detail-screen" id="journey" data-screen>
+      <div class="screen-head reveal"><p class="eyebrow">Work Comp Care Pathway</p><h2>What Happens After You Refer?</h2><p>Total Spine & Orthopedics understands the complexity of work-related injuries. This pathway shows how an injured worker can move from referral to evaluation, diagnosis, treatment, recovery, and return-to-activity planning.</p></div>
+      <div class="large-journey glass reveal delay-1" id="journeyModule"></div>
+      <div class="journey-detail glass reveal delay-2" id="journeyDetail"></div>
+    </section>
+
+    <section class="screen detail-screen" id="providers" data-screen>
+      <div class="screen-head reveal"><p class="eyebrow">Provider & Care Team Showcase</p><h2>Meet the Total Spine Providers</h2><p>The Total Spine & Orthopedics providers include physicians and advanced practice providers focused on spine, orthopedic, pain-management, foot-and-ankle, and recovery-focused care.</p></div>
+      <div class="provider-wall reveal delay-1" id="providerWall"></div>
+    </section>
+
+    <section class="screen detail-screen" id="why" data-screen>
+      <div class="screen-head reveal"><p class="eyebrow">Why Case Managers Refer</p><h2>The Total Spine Experience</h2><p>For workers' compensation patients, timely treatment, minimally invasive options, clear guidance, and coordinated support can help reduce confusion and keep the case moving.</p></div>
+      <div class="comparison-board glass reveal delay-1">
+        <div class="lane typical">
+          <h3>When Care Feels Fragmented</h3>
+          <div class="process-icons"><span>Injury</span><span>Records</span><span>Imaging</span><span>Multiple Handoffs</span><span>Unclear Next Step</span></div>
+          <ul><li>Symptoms may involve multiple areas: neck, back, arms, legs, hips, knees, or joints</li><li>Prior records and imaging can be difficult to organize</li><li>Patients may not know whether they need conservative care, injections, or surgical review</li><li>Case managers need a clear treatment plan and practical follow-through</li></ul>
+        </div>
+        <div class="vs-orb">→</div>
+        <div class="lane total">
+          <h3>With Total Spine & Orthopedics</h3>
+          <div class="process-icons"><span>Referral</span><span>Specialist Review</span><span>Imaging Review</span><span>Personalized Plan</span><span>Recovery Goal</span></div>
+          <ul><li>Work-comp focused support to help patients navigate the process</li><li>Surgical and non-surgical treatment options for spine and orthopedic conditions</li><li>Minimally invasive solutions are prioritized when clinically appropriate</li><li>Care is built around relieving pain, restoring mobility, and helping patients return to daily activity safely</li></ul>
+        </div>
+      </div>
+      <div class="metrics reveal delay-2"><div><b>Spine</b><span>Neck, back, discs, stenosis, sciatica, nerve pain</span></div><div><b>Ortho</b><span>Knee, shoulder, hip, hand, foot, ankle, joint pain</span></div><div><b>Options</b><span>Non-surgical care, injections, therapy, minimally invasive procedures</span></div><div><b>Access</b><span>Melbourne, Orlando / Lake Nona, and Titusville</span></div></div>
+    </section>
+
+    <section class="screen detail-screen" id="resources" data-screen>
+      <div class="screen-head reveal"><p class="eyebrow">Referral Tools</p><h2>Built for a Case Manager Conversation</h2><p>Use this section during a lunch-and-learn, adjuster meeting, or field visit to quickly explain conditions treated, treatment options, and what information helps the referral move smoothly.</p></div>
+      <div class="resource-grid reveal delay-1">
+        <article class="glass action-card"><span>▤</span><h3>Referral Essentials</h3><p>Helpful referral details include the claim number, employer, adjuster, authorization status, injury date, body part, prior treatment notes, and current work-status needs.</p></article>
+        <article class="glass action-card"><span>◉</span><h3>Imaging & Records</h3><p>MRI, CT, X-ray reports, operative notes, injection history, therapy notes, and prior specialist records can help the provider quickly determine the next clinical step.</p></article>
+        <article class="glass action-card"><span>☑</span><h3>Conditions Treated</h3><p>Total Spine & Orthopedics treats neck pain, back pain, bulging and herniated discs, sciatica, spinal stenosis, pinched nerves, SI joint pain, whiplash, joint pain, knee pain, hip pain, shoulder pain, foot and ankle conditions, and more.</p></article>
+        <article class="glass action-card"><span>⚕</span><h3>Treatment Options</h3><p>Care may include non-surgical treatment, physical therapy, diagnostic imaging, epidural steroid injections, facet injections, medial branch blocks, radiofrequency ablation, nerve block injections, discectomy, endoscopic spine surgery, minimally invasive surgery, SI joint injections, and orthopedic procedures.</p></article>
+      </div>
+      <div class="video-command glass reveal delay-2">
+        <div class="video-frame"><video controls playsinline preload="metadata" poster="assets/theme-reference.png"><source src="assets/total-spine-overview.mp4" type="video/mp4">Your browser does not support HTML5 video.</video></div>
+        <div class="video-copy"><p class="eyebrow">Practice Video</p><h3>See the Total Spine approach in motion.</h3><p>Use this video as the centerpiece of a case-manager visit, then move into the interactive spine explorer and referral pathway to explain how the care process works.</p><button class="pill-button play" id="openVideoInline"><span>▶</span> Play Fullscreen</button></div>
+      </div>
+    </section>
+
+    <section class="screen detail-screen" id="contact" data-screen>
+      <div class="screen-head reveal"><p class="eyebrow">Ready to Refer?</p><h2>Connect With Total Spine & Orthopedics</h2><p>For work-comp referrals, imaging review, appointment scheduling, or more information, use the contact options below.</p></div>
+      <div class="contact-board reveal delay-1">
+        <a class="contact-button" href="tel:13214994646">☎ <span><b>(321) 499-4646</b><small>Call Total Spine & Orthopedics</small></span></a>
+        <a class="contact-button primary" href="https://totalspineortho.com/appointment-scheduling/" target="_blank" rel="noreferrer">Schedule / Refer <span>→</span></a>
+        <a class="contact-button" href="mailto:info@totalspineortho.com">✉ <span><b>info@totalspineortho.com</b><small>Email the office</small></span></a>
+      </div>
+      <div class="location-panel glass reveal delay-2">
+        <h3>Locations</h3>
+        <p>Melbourne • Orlando / Lake Nona • Titusville</p>
+        <p class="small-note">Public-facing information reflects Total Spine & Orthopedics website content. Confirm referral, authorization, appointment, and availability details directly with the office.</p>
+      </div>
+    </section>
+  </main>
+
+  <div class="video-modal" id="videoModal" aria-hidden="true">
+    <div class="modal-glow"></div>
+    <button class="modal-close" id="closeVideo" aria-label="Close video">×</button>
+    <div class="modal-card">
+      <div class="modal-logo"><img class="modal-brand-img" src="assets/total-spine-green-blue-logo.png" alt="Total Spine logo" /><span class="modal-logo-text">TOTAL SPINE & ORTHOPEDICS</span></div>
+      <video id="modalVideoFrame" controls playsinline preload="metadata" poster="assets/theme-reference.png"><source src="assets/total-spine-overview.mp4" type="video/mp4">Your browser does not support HTML5 video.</video>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
