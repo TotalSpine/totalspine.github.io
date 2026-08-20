@@ -1,0 +1,880 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TSO Work Comp">
+<meta name="theme-color" content="#112337">
+<title>Total Spine &amp; Orthopedics — Workers' Compensation Partner</title>
+<style>
+  :root{
+    --blue:#204ce5;
+    --blue-light:#527eff;
+    --blue-dark:#001ab3;
+    --navy:#112337;
+    --navy-2:#1c3350;
+    --ink:#112337;
+    --muted:#5b6b80;
+    --paper:#ffffff;
+    --paper-2:#f7f9ff;
+    --paper-edge:#e7edfb;
+    --line:#e3e9f5;
+    --gold:#c9a24a;
+    --shadow:rgba(17,35,55,.18);
+    --flip:.85s cubic-bezier(.2,.7,.2,1);
+    --serif:"New York","Iowan Old Style","Palatino Linotype",Palatino,Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;margin:0;}
+  body{
+    font-family:var(--sans);
+    color:var(--ink);
+    background:
+      radial-gradient(1200px 800px at 80% -10%, #1b3a72 0%, transparent 60%),
+      radial-gradient(1000px 700px at -10% 110%, #0a1830 0%, transparent 55%),
+      linear-gradient(160deg,#0c1c34 0%,#112337 45%,#0a1526 100%);
+    overflow:hidden;
+    -webkit-user-select:none;user-select:none;
+    -webkit-touch-callout:none;
+    touch-action:manipulation;
+    overscroll-behavior:none;
+  }
+
+  /* ---------- Stage / Book ---------- */
+  .stage{
+    position:fixed;inset:0;
+    display:flex;align-items:center;justify-content:center;
+    padding:max(14px,env(safe-area-inset-top)) max(60px,env(safe-area-inset-right)) max(14px,env(safe-area-inset-bottom)) max(60px,env(safe-area-inset-left));
+  }
+  .book{
+    position:relative;
+    width:min(100%,1180px);
+    height:min(100%,860px);
+    aspect-ratio:4/3;
+    max-height:100%;
+    perspective:2600px;
+  }
+  .leaf{
+    position:absolute;inset:0;
+    transform-origin:left center;
+    transform:rotateY(0deg);
+    transition:transform var(--flip);
+    transform-style:preserve-3d;
+    will-change:transform;
+    border-radius:6px 16px 16px 6px;
+    overflow:hidden;
+    backface-visibility:hidden;
+    -webkit-backface-visibility:hidden;
+    box-shadow:0 28px 60px -22px var(--shadow), 0 8px 22px -16px rgba(0,0,0,.35);
+    pointer-events:none;
+  }
+  .leaf.is-current{pointer-events:auto;}
+  .leaf.flipped{transform:rotateY(-180deg);}
+
+  /* page surface */
+  .page{
+    position:absolute;inset:0;
+    background:linear-gradient(180deg,var(--paper) 0%,var(--paper-2) 100%);
+    display:flex;flex-direction:column;
+    overflow-y:auto;overflow-x:hidden;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior:contain;
+  }
+  /* binding shadow on the spine (left) edge */
+  .page::before{
+    content:"";position:absolute;left:0;top:0;bottom:0;width:46px;
+    background:linear-gradient(90deg,rgba(17,35,55,.16),rgba(17,35,55,0));
+    pointer-events:none;z-index:5;
+  }
+  /* moving glare during flip */
+  .leaf::after{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(90deg,rgba(255,255,255,0) 60%,rgba(255,255,255,.5) 100%);
+    opacity:0;transition:opacity var(--flip);z-index:6;
+  }
+  .leaf.turning::after{opacity:1;}
+
+  .pad{padding:clamp(26px,4.2vh,54px) clamp(34px,5vw,72px);}
+  .page-inner{width:100%;max-width:880px;margin:0 auto;}
+
+  /* ---------- Typography ---------- */
+  .eyebrow{
+    font-size:clamp(11px,1.5vh,13px);font-weight:700;letter-spacing:.16em;
+    text-transform:uppercase;color:var(--blue);margin:0 0 14px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .eyebrow::before{content:"";width:26px;height:2px;background:var(--blue);border-radius:2px;}
+  h1.display{
+    font-family:var(--serif);font-weight:600;
+    font-size:clamp(30px,5.4vh,52px);line-height:1.05;letter-spacing:-.01em;
+    margin:0 0 16px;color:var(--navy);
+  }
+  h2.head{
+    font-family:var(--serif);font-weight:600;
+    font-size:clamp(24px,4vh,38px);line-height:1.08;letter-spacing:-.01em;
+    margin:0 0 12px;color:var(--navy);
+  }
+  .lede{font-size:clamp(15px,2.05vh,19px);line-height:1.5;color:var(--muted);margin:0 0 22px;max-width:62ch;}
+  p{line-height:1.55;}
+
+  /* ---------- COVER ---------- */
+  .cover{
+    background:
+      radial-gradient(900px 600px at 78% 12%, rgba(82,126,255,.28) 0%, transparent 60%),
+      radial-gradient(700px 700px at 0% 100%, rgba(0,26,179,.30) 0%, transparent 55%),
+      linear-gradient(155deg,#16315c 0%,#112337 55%,#0a1526 100%);
+    color:#fff;justify-content:center;
+  }
+  .cover::before{background:linear-gradient(90deg,rgba(0,0,0,.35),transparent);}
+  .cover .pad{display:flex;flex-direction:column;justify-content:center;min-height:100%;}
+  .cover .wm{margin-bottom:auto;}
+  .cover h1{color:#fff;font-size:clamp(34px,6.6vh,64px);margin:0 0 18px;}
+  .cover .lede{color:#c9d6f2;font-size:clamp(16px,2.3vh,21px);max-width:54ch;}
+  .cover .rule{height:3px;width:74px;background:linear-gradient(90deg,var(--blue-light),transparent);border-radius:3px;margin:6px 0 22px;}
+  .cover .audience{
+    margin-top:30px;display:flex;flex-wrap:wrap;gap:10px;
+  }
+  .chip{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:9px 15px;border-radius:999px;font-size:13px;font-weight:600;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:#dde6fb;
+    backdrop-filter:blur(4px);
+  }
+  .chip .dot{width:7px;height:7px;border-radius:50%;background:var(--blue-light);}
+  .cover .cta-row{margin-top:34px;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+  .swipe-hint{
+    display:inline-flex;align-items:center;gap:11px;color:#9fb4dd;font-size:14px;font-weight:600;letter-spacing:.02em;
+  }
+  .swipe-hint .arrow{
+    width:46px;height:46px;border-radius:50%;display:grid;place-items:center;
+    background:var(--blue);color:#fff;animation:nudge 1.8s ease-in-out infinite;
+    box-shadow:0 10px 26px -8px rgba(32,76,229,.8);
+  }
+  @keyframes nudge{0%,100%{transform:translateX(0)}50%{transform:translateX(7px)}}
+
+  /* wordmark */
+  .wm{display:flex;align-items:center;gap:14px;}
+  .wm .mark{flex:none;}
+  .logo-img{height:clamp(42px,8vh,78px);width:auto;max-width:78%;display:block;object-fit:contain;}
+  .contact .logo-img{height:auto;width:clamp(150px,20vw,190px);max-width:80%;opacity:.96;margin-bottom:18px;}
+  .wm .txt{display:flex;flex-direction:column;line-height:1;}
+  .wm .t1{font-weight:800;letter-spacing:.02em;font-size:clamp(15px,2vh,19px);}
+  .wm .t2{font-weight:600;letter-spacing:.22em;font-size:clamp(9px,1.3vh,11px);opacity:.85;margin-top:5px;}
+  .cover .wm{color:#fff;}
+  .page .wm{color:var(--navy);}
+
+  /* ---------- Pillars / cards ---------- */
+  .grid{display:grid;gap:16px;}
+  .grid.cols-2{grid-template-columns:repeat(2,1fr);}
+  .grid.cols-3{grid-template-columns:repeat(3,1fr);}
+  @media (max-width:760px){.grid.cols-2,.grid.cols-3{grid-template-columns:1fr;}}
+
+  .card{
+    background:var(--paper);border:1px solid var(--line);border-radius:16px;
+    padding:20px 20px 18px;position:relative;overflow:hidden;
+    box-shadow:0 10px 24px -20px var(--shadow);
+  }
+  .card .ic{
+    width:46px;height:46px;border-radius:13px;display:grid;place-items:center;margin-bottom:13px;
+    background:linear-gradient(135deg,var(--blue) 0%,var(--blue-dark) 100%);
+    color:#fff;box-shadow:0 8px 18px -8px rgba(32,76,229,.7);
+  }
+  .card h3{margin:0 0 7px;font-size:clamp(16px,2.1vh,19px);font-weight:750;color:var(--navy);letter-spacing:-.01em;}
+  .card p{margin:0;font-size:clamp(13px,1.75vh,15px);color:var(--muted);line-height:1.5;}
+
+  /* ---------- Expanders ---------- */
+  .exp{
+    background:var(--paper);border:1px solid var(--line);border-radius:14px;
+    margin-bottom:12px;overflow:hidden;transition:border-color .2s,box-shadow .25s;
+  }
+  .exp.open{border-color:#c5d4f7;box-shadow:0 14px 30px -22px var(--shadow);}
+  .exp-head{
+    width:100%;background:none;border:0;cursor:pointer;
+    display:flex;align-items:center;gap:15px;text-align:left;
+    padding:17px 18px;font-family:var(--sans);color:var(--navy);
+  }
+  .exp-head .n{
+    flex:none;width:40px;height:40px;border-radius:11px;display:grid;place-items:center;
+    background:linear-gradient(135deg,var(--blue),var(--blue-dark));color:#fff;
+  }
+  .exp-head .tt{flex:1;min-width:0;}
+  .exp-head .tt b{display:block;font-size:clamp(15px,2vh,18px);font-weight:750;letter-spacing:-.01em;}
+  .exp-head .tt span{display:block;font-size:13px;color:var(--muted);margin-top:2px;}
+  .exp-head .pm{
+    flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;
+    border:1.5px solid var(--line);color:var(--blue);font-size:20px;font-weight:500;line-height:1;
+    transition:transform .3s,background .25s,color .25s,border-color .25s;
+  }
+  .exp.open .pm{transform:rotate(45deg);background:var(--blue);color:#fff;border-color:var(--blue);}
+  .exp-body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s ease;}
+  .exp.open .exp-body{grid-template-rows:1fr;}
+  .exp-inner{overflow:hidden;}
+  .exp-body p{margin:0 18px 17px 73px;font-size:clamp(13px,1.8vh,15px);color:var(--muted);line-height:1.55;}
+  .exp-body ul{margin:0 18px 16px 73px;padding:0;list-style:none;}
+  .exp-body li{position:relative;padding:5px 0 5px 22px;font-size:clamp(13px,1.8vh,15px);color:var(--muted);line-height:1.45;}
+  .exp-body li::before{content:"";position:absolute;left:0;top:12px;width:8px;height:8px;border-radius:50%;background:var(--blue);}
+  @media (max-width:680px){.exp-body p,.exp-body ul{margin-left:18px;}}
+
+  /* ---------- Stats / counters ---------- */
+  .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:8px;}
+  @media (max-width:760px){.stats{grid-template-columns:1fr;}}
+  .stat{
+    text-align:center;padding:26px 16px;border-radius:18px;
+    background:linear-gradient(170deg,var(--paper) 0%,var(--paper-2) 100%);
+    border:1px solid var(--line);
+  }
+  .stat .big{
+    font-family:var(--serif);font-weight:600;color:var(--blue);
+    font-size:clamp(38px,7vh,62px);line-height:1;letter-spacing:-.02em;
+  }
+  .stat .lbl{margin-top:10px;font-size:clamp(12px,1.7vh,14px);color:var(--muted);font-weight:600;line-height:1.35;}
+  .stat .star{color:var(--gold);}
+
+  /* ---------- Locations / map ---------- */
+  .loc-wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:26px;align-items:center;}
+  @media (max-width:780px){.loc-wrap{grid-template-columns:1fr;}}
+  .loc-list{display:flex;flex-direction:column;gap:12px;}
+  .loc{
+    display:flex;gap:14px;align-items:center;padding:15px 16px;border-radius:14px;
+    background:var(--paper);border:1px solid var(--line);
+  }
+  .loc .pin{width:40px;height:40px;border-radius:11px;background:rgba(32,76,229,.1);display:grid;place-items:center;color:var(--blue);flex:none;}
+  .loc b{display:block;font-size:16px;color:var(--navy);letter-spacing:-.01em;}
+  .loc span{font-size:13px;color:var(--muted);}
+  .map-card{
+    background:linear-gradient(170deg,#16315c,#0e2444);
+    border-radius:18px;padding:10px;border:1px solid var(--line);overflow:hidden;
+  }
+
+  /* ---------- Contact / CTA ---------- */
+  .contact{background:
+      radial-gradient(800px 500px at 85% 0%, rgba(82,126,255,.25), transparent 60%),
+      linear-gradient(160deg,#16315c,#112337 60%,#0a1526);color:#fff;justify-content:center;}
+  .contact::before{background:linear-gradient(90deg,rgba(0,0,0,.3),transparent);}
+  .contact .pad{display:flex;flex-direction:column;justify-content:center;min-height:100%;}
+  .contact h2{color:#fff;}
+  .contact .lede{color:#c9d6f2;}
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:8px;}
+  @media (max-width:680px){.contact-grid{grid-template-columns:1fr;}}
+  .ct{
+    display:flex;gap:14px;align-items:center;padding:18px;border-radius:16px;
+    background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  }
+  .ct .ic{width:46px;height:46px;border-radius:12px;background:var(--blue);display:grid;place-items:center;flex:none;}
+  .ct .lbl{font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:#9fb4dd;font-weight:700;}
+  .ct .val{font-size:clamp(16px,2.3vh,20px);font-weight:700;color:#fff;margin-top:3px;letter-spacing:-.01em;}
+  .ct.big{grid-column:1/-1;background:linear-gradient(135deg,var(--blue),var(--blue-dark));border-color:transparent;}
+  .ct.big .ic{background:rgba(255,255,255,.18);}
+  .ct.big .val{font-size:clamp(22px,3.4vh,30px);}
+
+  .note{margin-top:26px;font-size:12.5px;color:#8aa0c9;line-height:1.5;}
+
+  /* ---------- Footer kicker on inner pages ---------- */
+  .pagefoot{margin-top:auto;padding-top:18px;display:flex;align-items:center;justify-content:space-between;gap:12px;color:var(--muted);font-size:12px;}
+  .pagefoot .wm .t1{font-size:13px;}
+  .pagefoot .wm .t2{font-size:8px;}
+
+  /* ---------- Chrome: nav arrows, dots, toc ---------- */
+  .nav-arrow{
+    position:fixed;top:50%;transform:translateY(-50%);z-index:60;
+    width:54px;height:54px;border-radius:50%;border:0;cursor:pointer;
+    background:rgba(255,255,255,.14);backdrop-filter:blur(8px);
+    color:#fff;display:grid;place-items:center;
+    box-shadow:0 12px 30px -12px rgba(0,0,0,.6);
+    transition:background .2s,opacity .25s,transform .2s;
+  }
+  .nav-arrow:active{transform:translateY(-50%) scale(.92);}
+  .nav-arrow.prev{left:max(10px,env(safe-area-inset-left));}
+  .nav-arrow.next{right:max(10px,env(safe-area-inset-right));}
+  .nav-arrow[disabled]{opacity:0;pointer-events:none;}
+
+  .topbar{position:fixed;top:max(14px,env(safe-area-inset-top));left:0;right:0;z-index:55;display:flex;justify-content:center;pointer-events:none;}
+  .toc-btn{
+    pointer-events:auto;display:inline-flex;align-items:center;gap:9px;
+    padding:9px 16px;border-radius:999px;border:1px solid rgba(255,255,255,.18);
+    background:rgba(17,35,55,.5);backdrop-filter:blur(8px);color:#dbe5fb;
+    font-family:var(--sans);font-size:13px;font-weight:650;cursor:pointer;
+  }
+  .toc-btn svg{display:block;}
+
+  .dots{
+    position:fixed;left:0;right:0;bottom:max(16px,env(safe-area-inset-bottom));
+    z-index:55;display:flex;justify-content:center;gap:9px;pointer-events:none;
+  }
+  .dot-btn{
+    pointer-events:auto;width:9px;height:9px;border-radius:50%;border:0;padding:0;cursor:pointer;
+    background:rgba(255,255,255,.32);transition:width .3s,background .3s;
+  }
+  .dot-btn.active{width:26px;border-radius:6px;background:#fff;}
+
+  /* TOC overlay */
+  .toc{
+    position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;
+    background:rgba(7,16,30,.62);backdrop-filter:blur(6px);
+    opacity:0;pointer-events:none;transition:opacity .3s;padding:24px;
+  }
+  .toc.open{opacity:1;pointer-events:auto;}
+  .toc-panel{
+    width:min(560px,100%);max-height:86vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+    background:var(--paper);border-radius:22px;padding:14px;
+    box-shadow:0 40px 90px -30px rgba(0,0,0,.7);
+    transform:translateY(14px) scale(.98);transition:transform .3s;
+  }
+  .toc.open .toc-panel{transform:none;}
+  .toc-title{display:flex;align-items:center;justify-content:space-between;padding:12px 12px 14px;}
+  .toc-title b{font-family:var(--serif);font-size:22px;color:var(--navy);font-weight:600;}
+  .toc-close{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:none;color:var(--muted);font-size:18px;cursor:pointer;}
+  .toc-item{
+    width:100%;display:flex;align-items:center;gap:14px;text-align:left;cursor:pointer;
+    padding:14px;border:0;background:none;border-radius:12px;font-family:var(--sans);
+    transition:background .15s;
+  }
+  .toc-item:active{background:var(--paper-2);}
+  .toc-item .num{width:30px;height:30px;border-radius:8px;background:rgba(32,76,229,.1);color:var(--blue);display:grid;place-items:center;font-weight:750;font-size:13px;flex:none;}
+  .toc-item.active .num{background:var(--blue);color:#fff;}
+  .toc-item .tx{font-size:16px;font-weight:650;color:var(--navy);}
+  .toc-item .tx small{display:block;font-weight:500;color:var(--muted);font-size:12.5px;margin-top:1px;}
+
+  /* idle hint pulse on first load only */
+  .firsthint .swipe-hint{animation:fade 1s ease both;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1}}
+
+  @media (prefers-reduced-motion:reduce){
+    .leaf{transition:transform .01s !important;}
+    .swipe-hint .arrow{animation:none;}
+  }
+</style>
+</head>
+<body class="firsthint">
+
+  <!-- ================= TOP BAR ================= -->
+  <div class="topbar">
+    <button class="toc-btn" id="tocBtn" aria-label="Open contents">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+      Contents
+    </button>
+  </div>
+
+  <!-- ================= BOOK ================= -->
+  <div class="stage">
+    <div class="book" id="book">
+
+      <!-- ---------- 0 · COVER ---------- -->
+      <article class="leaf" data-title="Cover" data-sub="Workers' Compensation Partnership">
+        <div class="page cover"><div class="pad">
+          <div class="wm">
+            <img class="logo-img" src="assets/logo.png" alt="Total Spine &amp; Orthopedics"
+                 onerror="this.style.display='none';this.nextElementSibling.style.display='flex';">
+            <span class="wm-fallback" style="display:none;align-items:center;gap:14px;">
+              <span class="mark" aria-hidden="true">
+                <svg width="40" height="40" viewBox="0 0 40 40" fill="none">
+                  <rect x="4" y="4" width="32" height="32" rx="9" fill="#527eff"/>
+                  <g fill="#fff">
+                    <rect x="17.4" y="9"  width="5.2" height="3.4" rx="1.7"/>
+                    <rect x="16.6" y="14" width="6.8" height="3.8" rx="1.9"/>
+                    <rect x="16" y="19.4" width="8" height="4" rx="2"/>
+                    <rect x="16.6" y="25" width="6.8" height="3.8" rx="1.9"/>
+                    <rect x="17.4" y="30.4" width="5.2" height="3.2" rx="1.6"/>
+                  </g>
+                </svg>
+              </span>
+              <span class="txt"><span class="t1">TOTAL SPINE &amp; ORTHOPEDICS</span><span class="t2">WORKERS' COMPENSATION PARTNER</span></span>
+            </span>
+          </div>
+
+          <div>
+            <p class="eyebrow" style="color:var(--blue-light)">For Claims Professionals &amp; Attorneys</p>
+            <h1 class="display">Your Trusted Partner in Workers' Compensation Care</h1>
+            <div class="rule"></div>
+            <p class="lede">We return injured workers to the job faster, safer, and with documentation you can rely on — combining ultra‑minimally invasive procedures with clear, timely communication.</p>
+
+            <div class="audience">
+              <span class="chip"><span class="dot"></span>Adjusters</span>
+              <span class="chip"><span class="dot"></span>Defense &amp; Plaintiff Attorneys</span>
+              <span class="chip"><span class="dot"></span>Nurse Case Managers</span>
+              <span class="chip"><span class="dot"></span>Employers</span>
+            </div>
+
+            <div class="cta-row">
+              <span class="swipe-hint"><span class="arrow"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Swipe or tap to turn the page</span>
+            </div>
+          </div>
+        </div></div>
+      </article>
+
+      <!-- ---------- 1 · WHY TSO ---------- -->
+      <article class="leaf" data-title="Why TSO" data-sub="The work‑comp challenge, solved">
+        <div class="page"><div class="pad page-inner">
+          <p class="eyebrow">The Work‑Comp Challenge</p>
+          <h2 class="head">Three things every claim needs. One partner who delivers all three.</h2>
+          <p class="lede">Claim costs climb with every week of delayed treatment and lost time. You need a provider who moves quickly, treats conservatively first, and keeps you informed at every step — so cases resolve sooner and outcomes hold up.</p>
+
+          <div class="grid cols-3">
+            <div class="card">
+              <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="#fff"/></svg></div>
+              <h3>Faster Return to Work</h3>
+              <p>Same‑day, outpatient procedures and a conservative‑first pathway shorten recovery and reduce indemnity exposure.</p>
+            </div>
+            <div class="card">
+              <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M12 2l8 3v6c0 5-3.4 8.5-8 11-4.6-2.5-8-6-8-11V5l8-3z" fill="#fff"/><path d="M8.5 12l2.3 2.3L15.6 9.5" stroke="#204ce5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+              <h3>Defensible Expert Care</h3>
+              <p>Board‑certified spine &amp; orthopedic surgeons delivering evidence‑based treatment that stands up to scrutiny.</p>
+            </div>
+            <div class="card">
+              <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v11H9l-4 4V5z" fill="#fff"/><path d="M8 9h8M8 12h5" stroke="#204ce5" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <h3>Clear Communication</h3>
+              <p>Timely reports, work‑status notes, and direct coordination with adjusters, case managers, and counsel.</p>
+            </div>
+          </div>
+
+          <p class="lede" style="margin-top:24px;font-size:15px;">Turn the page to see how each one works in practice. <b style="color:var(--blue)">Tap any panel</b> to expand the details.</p>
+
+          <div class="pagefoot">
+            <div class="wm" style="color:var(--navy)"><span class="txt"><span class="t1" style="color:var(--navy)">TOTAL SPINE &amp; ORTHOPEDICS</span><span class="t2" style="color:var(--muted)">WORKERS' COMPENSATION</span></span></div>
+            <span>(321) 499‑4646</span>
+          </div>
+        </div></div>
+      </article>
+
+      <!-- ---------- 2 · FASTER RTW ---------- -->
+      <article class="leaf" data-title="Faster Recovery" data-sub="Back to work, sooner">
+        <div class="page"><div class="pad page-inner">
+          <p class="eyebrow">Pillar 01 — Return to Work</p>
+          <h2 class="head">Smaller incisions. Shorter recoveries. Less lost time.</h2>
+          <p class="lede">Our ultra‑minimally invasive approach means many injured workers walk in and walk out the same day — and get back to modified or full duty sooner than traditional open surgery allows.</p>
+
+          <div class="exp open">
+            <button class="exp-head" aria-expanded="true">
+              <span class="n"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z" fill="#fff"/></svg></span>
+              <span class="tt"><b>Same‑day, outpatient procedures</b><span>Walk in, walk out — no hospital stay</span></span>
+              <span class="pm">+</span>
+            </button>
+            <div class="exp-body"><div class="exp-inner">
+              <ul>
+                <li>Tiny incisions reduce tissue damage, blood loss, and infection risk.</li>
+                <li>Most patients go home the same day and begin recovery immediately.</li>
+                <li>Less downtime translates directly into fewer indemnity weeks.</li>
+              </ul>
+            </div></div>
+          </div>
+
+          <div class="exp">
+            <button class="exp-head" aria-expanded="false">
+              <span class="n"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M3 12h4l2 6 4-14 2 8h3" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="tt"><b>Conservative‑first pathway</b><span>Surgery only when it's truly warranted</span></span>
+              <span class="pm">+</span>
+            </button>
+            <div class="exp-body"><div class="exp-inner">
+              <ul>
+                <li>We start with non‑surgical options: physical therapy, injections, and regenerative care.</li>
+                <li>Cost‑effective, appropriate treatment that documents a clear progression of care.</li>
+                <li>Surgical intervention is reserved for cases that genuinely require it.</li>
+              </ul>
+            </div></div>
+          </div>
+
+          <div class="exp">
+            <button class="exp-head" aria-expanded="false">
+              <span class="n"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="#fff" stroke-width="2"/><path d="M12 8v4l3 2" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+              <span class="tt"><b>Rapid access to care</b><span>Fast scheduling for injured workers</span></span>
+              <span class="pm">+</span>
+            </button>
+            <div class="exp-body"><div class="exp-inner">
+              <ul>
+                <li>Prompt evaluations keep claims moving and prevent avoidable delays.</li>
+                <li>Timely imaging and diagnostics establish an accurate diagnosis early.</li>
+                <li>Two Central Florida locations shorten travel and wait times.</li>
+              </ul>
+            </div></div>
+          </div>
+
+          <div class="pagefoot"><span>Pillar 01 of 03</span><span>(321) 499‑4646</span></div>
+        </div></div>
+      </article>
+
+      <!-- ---------- 3 · DEFENSIBLE CARE ---------- -->
+      <article class="leaf" data-title="Expert Care" data-sub="Credentials you can stand behind">
+        <div class="page"><div class="pad page-inner">
+          <p class="eyebrow">Pillar 02 — Defensible Care</p>
+          <h2 class="head">Treatment that holds up — clinically and in the file.</h2>
+          <p class="lede">When a case is reviewed, the credentials and the record matter. Our surgeons are recognized leaders in minimally invasive spine and orthopedic care.</p>
+
+          <div class="grid cols-2" style="margin-bottom:18px;">
+            <div class="card">
+              <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="9" r="5" stroke="#fff" stroke-width="2"/><path d="M9 13l-1 8 4-2 4 2-1-8" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></div>
+              <h3>Board‑certified surgeons</h3>
+              <p>Including the first endoscopic spine fellow in the country — leaders in the techniques others are just adopting.</p>
+            </div>
+            <div class="card">
+              <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M4 19V5M4 19h16M8 19v-6M12 19v-9M16 19v-4M20 19v-8" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></div>
+              <h3>Proven track record</h3>
+              <p>More than 50,000 patients treated, with a 4.6★ reputation across roughly 1,140 verified reviews.</p>
+            </div>
+          </div>
+
+          <div class="exp">
+            <button class="exp-head" aria-expanded="false">
+              <span class="n"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 3l7 4v5c0 4-3 6.5-7 8-4-1.5-7-4-7-8V7l7-4z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></span>
+              <span class="tt"><b>Evidence‑based &amp; second‑opinion ready</b><span>An objective read when a claim needs another look</span></span>
+              <span class="pm">+</span>
+            </button>
+            <div class="exp-body"><div class="exp-inner">
+              <ul>
+                <li>Independent diagnostic review confirms whether a recommended treatment is warranted.</li>
+                <li>An objective clinical perspective when a claim needs a second opinion.</li>
+                <li>Clear clinical rationale documented for every recommendation.</li>
+              </ul>
+            </div></div>
+          </div>
+
+          <div class="exp">
+            <button class="exp-head" aria-expanded="false">
+              <span class="n"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 3h9l3 3v15H6z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M9 11h6M9 15h6" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
+              <span class="tt"><b>Full continuum under one roof</b><span>Diagnosis, conservative care, surgery, recovery</span></span>
+              <span class="pm">+</span>
+            </button>
+            <div class="exp-body"><div class="exp-inner">
+              <ul>
+                <li>Imaging, interventional pain management, regenerative options, and surgery in one coordinated team.</li>
+                <li>Fewer hand‑offs means cleaner records and a more efficient claim.</li>
+                <li>Consistent provider relationship from intake through discharge.</li>
+              </ul>
+            </div></div>
+          </div>
+
+          <div class="pagefoot"><span>Pillar 02 of 03</span><span>(321) 499‑4646</span></div>
+        </div></div>
+      </article>
+
+      <!-- ---------- 4 · COMMUNICATION ---------- -->
+      <article class="leaf" data-title="Communication" data-sub="Reporting you can rely on">
+        <div class="page"><div class="pad page-inner">
+          <p class="eyebrow">Pillar 03 — Communication &amp; Reporting</p>
+          <h2 class="head">You're never left guessing where a claim stands.</h2>
+          <p class="lede">We treat adjusters, case managers, and attorneys as part of the care team — with the timely, well‑documented updates your file demands.</p>
+
+          <div class="exp open">
+            <button class="exp-head" aria-expanded="true">
+              <span class="n"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 5h16v11H9l-4 4V5z" fill="#fff"/><path d="M8 9h8M8 12h5" stroke="#204ce5" stroke-width="2" stroke-linecap="round"/></svg></span>
+              <span class="tt"><b>Timely, thorough documentation</b><span>Reports and work‑status notes when you need them</span></span>
+              <span class="pm">+</span>
+            </button>
+            <div class="exp-body"><div class="exp-inner">
+              <ul>
+                <li>Clear treatment plans and progress notes that document the path of care.</li>
+                <li>Up‑to‑date work‑status and activity restrictions to guide RTW decisions.</li>
+                <li>Records prepared with the claims and legal audience in mind.</li>
+              </ul>
+            </div></div>
+          </div>
+
+          <div class="exp">
+            <button class="exp-head" aria-expanded="false">
+              <span class="n"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="8" cy="9" r="3" stroke="#fff" stroke-width="2"/><circle cx="17" cy="9" r="3" stroke="#fff" stroke-width="2"/><path d="M3 19c0-2.8 2.2-5 5-5s5 2.2 5 5M14 14c2.5.2 4.5 2.3 4.5 5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
+              <span class="tt"><b>Direct coordination with your team</b><span>Adjusters · nurse case managers · counsel</span></span>
+              <span class="pm">+</span>
+            </button>
+            <div class="exp-body"><div class="exp-inner">
+              <ul>
+                <li>A responsive point of contact for authorizations and status questions.</li>
+                <li>Nurse case managers are welcomed as partners in the care plan.</li>
+                <li>Coordinated scheduling that respects claim timelines.</li>
+              </ul>
+            </div></div>
+          </div>
+
+          <div class="exp">
+            <button class="exp-head" aria-expanded="false">
+              <span class="n"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M5 4h14v16l-7-3-7 3z" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></span>
+              <span class="tt"><b>Clear path to resolution</b><span>From diagnosis to discharge and return‑to‑work</span></span>
+              <span class="pm">+</span>
+            </button>
+            <div class="exp-body"><div class="exp-inner">
+              <ul>
+                <li>Defined milestones so every party knows what comes next.</li>
+                <li>Return‑to‑work guidance grounded in the clinical picture.</li>
+                <li>Documentation that supports timely, fair claim closure.</li>
+              </ul>
+            </div></div>
+          </div>
+
+          <p class="note" style="color:var(--muted)">Specific services such as IME, impairment ratings, or testimony can be tailored per case — confirm scope with our work‑comp coordinator.</p>
+
+          <div class="pagefoot"><span>Pillar 03 of 03</span><span>(321) 499‑4646</span></div>
+        </div></div>
+      </article>
+
+      <!-- ---------- 5 · BY THE NUMBERS ---------- -->
+      <article class="leaf" data-title="By the Numbers" data-sub="The record at a glance">
+        <div class="page"><div class="pad page-inner">
+          <p class="eyebrow">The Record at a Glance</p>
+          <h2 class="head">Scale and reputation that de‑risk your referral.</h2>
+          <p class="lede">Experience matters in work comp. The numbers reflect a practice built to handle volume without sacrificing the quality your cases require.</p>
+
+          <div class="stats">
+            <div class="stat"><div class="big"><span data-count="50000" data-suffix="+">0</span></div><div class="lbl">Patients treated</div></div>
+            <div class="stat"><div class="big"><span data-count="4.6" data-dec="1">0</span><span class="star">★</span></div><div class="lbl">Average rating across ~1,140 reviews</div></div>
+            <div class="stat"><div class="big"><span data-count="2">0</span></div><div class="lbl">Central Florida locations</div></div>
+          </div>
+
+          <div class="grid cols-3" style="margin-top:18px;">
+            <div class="card"><h3 style="color:var(--blue);font-family:var(--serif);font-weight:600;">Same‑day</h3><p>Most procedures are outpatient — walk in, walk out.</p></div>
+            <div class="card"><h3 style="color:var(--blue);font-family:var(--serif);font-weight:600;">Coordinated</h3><p>One team from intake through discharge — fewer hand‑offs, cleaner records.</p></div>
+            <div class="card"><h3 style="color:var(--blue);font-family:var(--serif);font-weight:600;">Board‑certified</h3><p>Including the nation's first endoscopic spine fellow.</p></div>
+          </div>
+
+          <div class="pagefoot"><span>Figures verified June 2026</span><span>(321) 499‑4646</span></div>
+        </div></div>
+      </article>
+
+      <!-- ---------- 6 · LOCATIONS ---------- -->
+      <article class="leaf" data-title="Access" data-sub="Locations & scheduling">
+        <div class="page"><div class="pad page-inner">
+          <p class="eyebrow">Access Across Central Florida</p>
+          <h2 class="head">Convenient care, close to where injured workers live.</h2>
+          <p class="lede">Two convenient locations and fast scheduling keep travel and downtime to a minimum — important factors in keeping a claim on track.</p>
+
+          <div class="loc-wrap">
+            <div class="loc-list">
+              <div class="loc"><span class="pin"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2c3.9 0 7 3 7 6.8 0 5-7 12.2-7 12.2S5 13.8 5 8.8C5 5 8.1 2 12 2z" stroke="#204ce5" stroke-width="2"/><circle cx="12" cy="9" r="2.4" fill="#204ce5"/></svg></span><div><b>Melbourne</b><span>Brevard County</span></div></div>
+              <div class="loc"><span class="pin"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2c3.9 0 7 3 7 6.8 0 5-7 12.2-7 12.2S5 13.8 5 8.8C5 5 8.1 2 12 2z" stroke="#204ce5" stroke-width="2"/><circle cx="12" cy="9" r="2.4" fill="#204ce5"/></svg></span><div><b>Lake Nona</b><span>Greater Orlando</span></div></div>
+            </div>
+
+            <div class="map-card" aria-hidden="true">
+              <svg viewBox="0 0 300 320" width="100%" style="display:block;border-radius:12px;">
+                <rect width="300" height="320" fill="#0e2444"/>
+                <!-- stylized FL east coast landmass -->
+                <path d="M60 30 C120 20 175 35 200 70 C215 95 210 130 230 160 C245 185 235 230 215 270 C205 290 190 305 178 300 C170 296 172 280 165 262 C150 225 150 200 135 170 C120 140 95 130 80 100 C70 80 50 60 60 30 Z" fill="#16315c" stroke="#274a7d" stroke-width="2"/>
+                <!-- pins -->
+                <g>
+                  <circle cx="196" cy="150" r="20" fill="#204ce5" opacity=".18"><animate attributeName="r" values="14;24;14" dur="2.6s" repeatCount="indefinite"/></circle>
+                  <circle cx="196" cy="150" r="6" fill="#527eff"/>
+                  <text x="196" y="138" fill="#cfe0ff" font-size="11" font-family="sans-serif" text-anchor="middle" font-weight="700">Melbourne</text>
+
+                  <circle cx="150" cy="120" r="18" fill="#204ce5" opacity=".18"><animate attributeName="r" values="13;22;13" dur="2.6s" begin=".6s" repeatCount="indefinite"/></circle>
+                  <circle cx="150" cy="120" r="6" fill="#527eff"/>
+                  <text x="150" y="108" fill="#cfe0ff" font-size="11" font-family="sans-serif" text-anchor="middle" font-weight="700">Lake Nona</text>
+
+                </g>
+                <text x="150" y="305" fill="#5e7aa8" font-size="10" font-family="sans-serif" text-anchor="middle">Central Florida · Atlantic Coast</text>
+              </svg>
+            </div>
+          </div>
+
+          <div class="grid cols-2" style="margin-top:18px;">
+            <div class="card"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8.5" stroke="#fff" stroke-width="2"/><path d="M12 8v4l3 2" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></div><h3>Fast scheduling</h3><p>Prompt appointments for injured workers — because every week of delay adds cost.</p></div>
+            <div class="card"><div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 4h4l2 5-2 1.5c1 2 2.5 3.5 4.5 4.5L15 17l5 2v-4" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></div><h3>Mon–Fri, 8–5</h3><p>A responsive coordinator ready to help with intake and authorizations.</p></div>
+          </div>
+
+          <div class="pagefoot"><span>Melbourne · Lake Nona, FL</span><span>(321) 499‑4646</span></div>
+        </div></div>
+      </article>
+
+      <!-- ---------- 7 · CONTACT ---------- -->
+      <article class="leaf" data-title="Partner With Us" data-sub="Refer a case today">
+        <div class="page contact"><div class="pad page-inner">
+          <img class="logo-img" src="assets/logo.png" alt="Total Spine &amp; Orthopedics" onerror="this.style.display='none';">
+          <p class="eyebrow" style="color:var(--blue-light)">Let's Work Together</p>
+          <h2 class="head">Refer a case — or start a conversation.</h2>
+          <p class="lede">We'd welcome the chance to show your team how a coordinated, minimally invasive approach can resolve claims faster. Reach out today.</p>
+
+          <div class="contact-grid">
+            <div class="ct big">
+              <div class="ic"><svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M5 4h4l2 5-2 1.5c1 2 2.5 3.5 4.5 4.5L15 17l5 2v-4" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></div>
+              <div><div class="lbl">Call our work‑comp line</div><div class="val">(321) 499‑4646</div></div>
+            </div>
+            <div class="ct">
+              <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 6h16v12H4z" stroke="#fff" stroke-width="2"/><path d="M4 7l8 6 8-6" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg></div>
+              <div><div class="lbl">Online</div><div class="val">totalspineortho.com</div></div>
+            </div>
+            <div class="ct">
+              <div class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 2c3.9 0 7 3 7 6.8 0 5-7 12.2-7 12.2S5 13.8 5 8.8C5 5 8.1 2 12 2z" stroke="#fff" stroke-width="2"/><circle cx="12" cy="9" r="2.4" fill="#fff"/></svg></div>
+              <div><div class="lbl">Locations</div><div class="val">Melbourne · Lake Nona</div></div>
+            </div>
+          </div>
+
+          <p class="note">Total Spine &amp; Orthopedics — a dedicated partner to the workers' compensation community across Central Florida.</p>
+
+          <div style="margin-top:26px"><span class="swipe-hint" style="color:#9fb4dd;cursor:pointer" id="restart"><span class="arrow" style="animation:none;background:rgba(255,255,255,.12)"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 12a8 8 0 108-8M4 12V7m0 5h5" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>Back to the beginning</span></div>
+        </div></div>
+      </article>
+
+    </div>
+  </div>
+
+  <!-- ================= CHROME ================= -->
+  <button class="nav-arrow prev" id="prev" aria-label="Previous page">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button class="nav-arrow next" id="next" aria-label="Next page">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+
+  <div class="dots" id="dots"></div>
+
+  <!-- ================= TOC ================= -->
+  <div class="toc" id="toc">
+    <div class="toc-panel">
+      <div class="toc-title"><b>Contents</b><button class="toc-close" id="tocClose" aria-label="Close">✕</button></div>
+      <div id="tocList"></div>
+    </div>
+  </div>
+
+<script>
+(function(){
+  "use strict";
+  var book   = document.getElementById('book');
+  var leaves = Array.prototype.slice.call(book.querySelectorAll('.leaf'));
+  var N = leaves.length;
+  var current = 0;
+  var animating = false;
+
+  // stable stacking: page being turned always sits above the page it reveals/covers
+  leaves.forEach(function(lf,i){ lf.style.zIndex = (N - i); });
+
+  function render(){
+    leaves.forEach(function(lf,i){
+      var flipped = i < current;
+      lf.classList.toggle('flipped', flipped);
+      lf.classList.toggle('is-current', i === current);
+      // reset scroll position of the page coming into view
+      if(i === current){ var pg = lf.querySelector('.page'); if(pg) pg.scrollTop = 0; }
+    });
+    document.getElementById('prev').disabled = (current === 0);
+    document.getElementById('next').disabled = (current === N - 1);
+    Array.prototype.forEach.call(document.querySelectorAll('.dot-btn'), function(d,i){
+      d.classList.toggle('active', i === current);
+    });
+    Array.prototype.forEach.call(document.querySelectorAll('.toc-item'), function(t,i){
+      t.classList.toggle('active', i === current);
+    });
+    if(current > 0) document.body.classList.remove('firsthint');
+    // counters
+    if(leaves[current].dataset.title === 'By the Numbers') runCounters(leaves[current]);
+  }
+
+  function go(dir){
+    if(animating) return;
+    var target = current + dir;
+    if(target < 0 || target > N - 1) return;
+    animating = true;
+    var moving = dir > 0 ? leaves[current] : leaves[target];
+    moving.classList.add('turning');
+    current = target;
+    render();
+    setTimeout(function(){ moving.classList.remove('turning'); animating = false; }, 880);
+  }
+
+  function jump(idx){
+    if(idx === current) return;
+    current = Math.max(0, Math.min(N-1, idx));
+    render();
+  }
+
+  document.getElementById('next').addEventListener('click', function(){ go(1); });
+  document.getElementById('prev').addEventListener('click', function(){ go(-1); });
+
+  // keyboard
+  window.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight' || e.key === 'PageDown'){ go(1); }
+    else if(e.key === 'ArrowLeft' || e.key === 'PageUp'){ go(-1); }
+    else if(e.key === 'Escape'){ closeToc(); }
+  });
+
+  // ---- swipe ----
+  var sx=0, sy=0, st=0, swiping=false;
+  book.addEventListener('touchstart', function(e){
+    if(e.touches.length !== 1) return;
+    sx = e.touches[0].clientX; sy = e.touches[0].clientY; st = Date.now(); swiping = true;
+  }, {passive:true});
+  book.addEventListener('touchend', function(e){
+    if(!swiping) return; swiping = false;
+    var t = e.changedTouches[0];
+    var dx = t.clientX - sx, dy = t.clientY - sy, dt = Date.now() - st;
+    if(Math.abs(dx) > 55 && Math.abs(dx) > Math.abs(dy)*1.6 && dt < 700){
+      go(dx < 0 ? 1 : -1);
+    }
+  }, {passive:true});
+
+  // ---- tap-zone on the cover only (so inner interactive pages aren't disturbed) ----
+  // (handled via the explicit swipe + arrows everywhere else)
+
+  // ---- expanders (event delegation) ----
+  book.addEventListener('click', function(e){
+    var head = e.target.closest('.exp-head');
+    if(!head) return;
+    var exp = head.parentElement;
+    var open = exp.classList.toggle('open');
+    head.setAttribute('aria-expanded', open ? 'true' : 'false');
+  });
+
+  // ---- restart link ----
+  var restart = document.getElementById('restart');
+  if(restart) restart.addEventListener('click', function(){ jump(0); });
+
+  // ---- counters ----
+  function runCounters(leaf){
+    var els = leaf.querySelectorAll('[data-count]');
+    els.forEach(function(el){
+      if(el.dataset.done) return; el.dataset.done = "1";
+      var target = parseFloat(el.dataset.count);
+      var dec = parseInt(el.dataset.dec || "0", 10);
+      var suffix = el.dataset.suffix || "";
+      var start = performance.now(), dur = 1300;
+      function fmt(v){
+        if(dec > 0) return v.toFixed(dec);
+        return Math.round(v).toLocaleString('en-US');
+      }
+      function tick(now){
+        var p = Math.min(1, (now - start)/dur);
+        var e = 1 - Math.pow(1 - p, 3); // easeOutCubic
+        el.textContent = fmt(target * e) + (p===1 ? suffix : (suffix && p>0.99 ? suffix : ""));
+        if(p < 1) requestAnimationFrame(tick);
+        else el.textContent = fmt(target) + suffix;
+      }
+      requestAnimationFrame(tick);
+    });
+  }
+
+  // ---- dots ----
+  var dotsWrap = document.getElementById('dots');
+  leaves.forEach(function(lf,i){
+    var b = document.createElement('button');
+    b.className = 'dot-btn' + (i===0?' active':'');
+    b.setAttribute('aria-label', 'Go to ' + (lf.dataset.title||('page '+(i+1))));
+    b.addEventListener('click', function(){ jump(i); });
+    dotsWrap.appendChild(b);
+  });
+
+  // ---- TOC ----
+  var toc = document.getElementById('toc');
+  var tocList = document.getElementById('tocList');
+  leaves.forEach(function(lf,i){
+    var b = document.createElement('button');
+    b.className = 'toc-item' + (i===0?' active':'');
+    b.innerHTML = '<span class="num">'+(i===0?'★':i)+'</span><span class="tx">'+
+      (lf.dataset.title||('Page '+(i+1)))+'<small>'+(lf.dataset.sub||'')+'</small></span>';
+    b.addEventListener('click', function(){ jump(i); closeToc(); });
+    tocList.appendChild(b);
+  });
+  function openToc(){ toc.classList.add('open'); }
+  function closeToc(){ toc.classList.remove('open'); }
+  document.getElementById('tocBtn').addEventListener('click', openToc);
+  document.getElementById('tocClose').addEventListener('click', closeToc);
+  toc.addEventListener('click', function(e){ if(e.target === toc) closeToc(); });
+
+  // prevent iOS rubber-band on the body
+  document.addEventListener('touchmove', function(e){
+    if(e.target.closest('.page') || e.target.closest('.toc-panel')) return;
+    e.preventDefault();
+  }, {passive:false});
+
+  render();
+})();
+</script>
+</body>
+</html>
