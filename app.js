@@ -99,7 +99,7 @@ if(providerWall){
 const providerModal=document.createElement('div');
 providerModal.className='provider-modal';
 providerModal.setAttribute('aria-hidden','true');
-providerModal.innerHTML=`<div class="provider-modal-glow"></div><div class="provider-modal-card" role="dialog" aria-modal="true" aria-labelledby="providerBioName"><button class="provider-modal-close" type="button" aria-label="Close provider bio">×</button><div class="provider-bio-layout"><div class="provider-bio-photo"><img id="providerBioPhoto" alt="" /></div><div class="provider-bio-copy"><p class="eyebrow" id="providerBioRole"></p><h3 id="providerBioName"></h3><div class="wc-bio-section"><h4>Why Workers' Comp Case Managers Refer This Provider</h4><p id="providerBioWhy"></p></div><div class="wc-bio-section"><h4>Best Referral For</h4><ul id="providerBioBest"></ul></div><div class="wc-bio-section"><h4>What This Means for Your Claim</h4><p id="providerBioValue"></p></div><div class="tags" id="providerBioTags"></div><a class="bio-link refer-link" href="#refer">Refer a Patient <span>→</span></a><a id="providerBioLink" class="bio-link secondary-bio-link" href="#" target="_blank" rel="noopener">View source profile <span>↗</span></a></div></div></div>`;
+providerModal.innerHTML=`<div class="provider-modal-glow"></div><div class="provider-modal-card" role="dialog" aria-modal="true" aria-labelledby="providerBioName"><button class="provider-modal-close" type="button" aria-label="Close provider bio">×</button><div class="provider-bio-layout"><div class="provider-bio-photo"><img id="providerBioPhoto" alt="" /></div><div class="provider-bio-copy"><p class="eyebrow" id="providerBioRole"></p><h3 id="providerBioName"></h3><div class="wc-bio-section"><h4>Why Workers' Comp Case Managers Refer This Provider</h4><p id="providerBioWhy"></p></div><div class="wc-bio-section"><h4>Best Referral For</h4><ul id="providerBioBest"></ul></div><div class="wc-bio-section"><h4>What This Means for Your Claim</h4><p id="providerBioValue"></p></div><div class="tags" id="providerBioTags"></div><a class="bio-link refer-link" href="https://totalspineortho.com/work-comp-referral/" target="_blank" rel="noreferrer">Refer a Patient <span>→</span></a><a id="providerBioLink" class="bio-link secondary-bio-link" href="#" target="_blank" rel="noopener">View source profile <span>↗</span></a></div></div></div>`;
 document.body.appendChild(providerModal);
 const providerClose=providerModal.querySelector('.provider-modal-close');
 function openProviderBio(index){
@@ -113,7 +113,7 @@ function openProviderBio(index){
  providerModal.querySelector('#providerBioValue').textContent=p.bio.value;
  providerModal.querySelector('#providerBioTags').innerHTML=p.tags.map(t=>`<span>${t}</span>`).join('');
  providerModal.querySelector('#providerBioLink').href=p.url;
- providerModal.querySelector('.refer-link').onclick=(e)=>{e.preventDefault();closeProviderBio();go('refer');};
+ providerModal.querySelector('.refer-link').onclick=()=>{closeProviderBio();};
  providerModal.classList.add('open');
  providerModal.setAttribute('aria-hidden','false');
  providerClose.focus();
